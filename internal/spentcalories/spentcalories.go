@@ -19,12 +19,12 @@ const (
 
 func parseTraining(data string) (int, string, time.Duration, error) {
 	if data == "" {
-		return 0, "", 0, errors.New("пустая строка")
+		return 0, "", 0, errors.New("empty string")
 	}
 
 	parts := strings.Split(data, ",")
 	if len(parts) != 3 {
-		return 0, "", 0, errors.New("неверный формат строки")
+		return 0, "", 0, errors.New("format error")
 	}
 
 	stepsStr := parts[0]
@@ -33,18 +33,18 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 
 	steps, err := strconv.Atoi(stepsStr)
 	if err != nil {
-		return 0, "", 0, errors.New("шаги не преобразовались")
+		return 0, "", 0, err
 	}
 	if steps <= 0 {
-		return 0, "", 0, errors.New("количество шагов должно быть положительным")
+		return 0, "", 0, errors.New("steps must be positive")
 	}
 
 	duration, err := time.ParseDuration(durationStr)
 	if err != nil {
-		return 0, "", 0, errors.New("ошибка длительности")
+		return 0, "", 0, err
 	}
 	if duration <= 0 {
-		return 0, "", 0, errors.New("длительность должна быть положительной")
+		return 0, "", 0, errors.New("duration must be positive")
 	}
 
 	return steps, activity, duration, nil
@@ -74,7 +74,7 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 	}
 
 	if steps <= 0 || duration <= 0 {
-		return "", errors.New("неправильные данные")
+		return "", errors.New("invalid data: steps and duration must be positive")
 	}
 
 	dist := distance(steps, height)
@@ -88,7 +88,7 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 	case "ходьба":
 		calories, err = WalkingSpentCalories(steps, weight, height, duration)
 	default:
-		return "", errors.New("неизвестный тип тренировки")
+		return "", errors.New("unknown activity type")
 	}
 	if err != nil {
 		return "", err
@@ -101,8 +101,8 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 }
 
 func RunningSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	if steps <= 0 || weight <= 0 || height <= 0 || duration <= 0 {
-		return 0, errors.New("неправильные входные данные")
+	if steps <= 0 || duration <= 0 {
+		return 0, errors.New("error in input data")
 	}
 
 	speed := meanSpeed(steps, height, duration)
@@ -113,8 +113,8 @@ func RunningSpentCalories(steps int, weight, height float64, duration time.Durat
 }
 
 func WalkingSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	if steps <= 0 || weight <= 0 || height <= 0 || duration <= 0 {
-		return 0, errors.New("неправильные входные данные")
+	if steps <= 0 || duration <= 0 {
+		return 0, errors.New("error in input data")
 	}
 
 	speed := meanSpeed(steps, height, duration)

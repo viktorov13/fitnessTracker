@@ -20,12 +20,12 @@ const (
 
 func parsePackage(data string) (int, time.Duration, error) {
 	if data == "" {
-		return 0, 0, errors.New("пустая строка")
+		return 0, 0, errors.New("empty string")
 	}
 
 	parts := strings.Split(data, ",")
 	if len(parts) != 2 {
-		return 0, 0, errors.New("неверный формат строки")
+		return 0, 0, errors.New("format error")
 	}
 
 	stepsStr := parts[0]
@@ -33,18 +33,18 @@ func parsePackage(data string) (int, time.Duration, error) {
 
 	steps, err := strconv.Atoi(stepsStr)
 	if err != nil {
-		return 0, 0, errors.New("шаги не преобразовались")
+		return 0, 0, err
 	}
 	if steps <= 0 {
-		return 0, 0, errors.New("ошибка количества шагов")
+		return 0, 0, errors.New("steps must be positive")
 	}
 
 	duration, err := time.ParseDuration(durationStr)
-	if err != nil || duration <= 0 {
-		return 0, 0, errors.New("ошибка парсинга длительности")
+	if err != nil {
+		return 0, 0, err
 	}
 	if duration <= 0 {
-		return 0, 0, errors.New("длительность должна быть положительной")
+		return 0, 0, errors.New("duration must be positive")
 	}
 
 	return steps, duration, nil
@@ -53,11 +53,11 @@ func parsePackage(data string) (int, time.Duration, error) {
 func DayActionInfo(data string, weight, height float64) string {
 	steps, duration, err := parsePackage(data)
 	if err != nil {
-		log.Println("ошибка при парсинге пакета:", err)
+		log.Println("parsing error", err)
 		return ""
 	}
 	if steps <= 0 || duration <= 0 {
-		log.Println("Неправильные данные", err)
+		log.Println("invalid data: steps and duration must be positive")
 		return ""
 	}
 
@@ -65,7 +65,7 @@ func DayActionInfo(data string, weight, height float64) string {
 
 	calories, err := spentcalories.WalkingSpentCalories(steps, weight, height, duration)
 	if err != nil {
-		log.Println("ошибка вычисления", err)
+		log.Println("calculation error", err)
 		return ""
 	}
 
