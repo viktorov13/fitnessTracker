@@ -33,7 +33,7 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 
 	steps, err := strconv.Atoi(stepsStr)
 	if err != nil {
-		return 0, "", 0, errors.New("шаги не преобразовались")
+		return 0, "", 0, err
 	}
 	if steps <= 0 {
 		return 0, "", 0, errors.New("количество шагов должно быть положительным")
@@ -41,7 +41,7 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 
 	duration, err := time.ParseDuration(durationStr)
 	if err != nil {
-		return 0, "", 0, errors.New("ошибка длительности")
+		return 0, "", 0, err
 	}
 	if duration <= 0 {
 		return 0, "", 0, errors.New("длительность должна быть положительной")
